@@ -11,6 +11,7 @@
   - Değiştirilmiş MERN stack: FIRN stack: 
   - Node.js
   - React.js
+  - Next.js
   - Firebase
 
 ### Faz 1:
