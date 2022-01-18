@@ -33,3 +33,4 @@
 
 ### Faz 3+:
 - Arduino entegrasyonu ve compiler ekleme
+- dark mode ekleme
