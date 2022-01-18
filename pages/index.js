@@ -1,9 +1,14 @@
 import Head from 'next/head';
 import Card from "./components/Card";
+import Board from "./components/Board";
 
 export default function Home() {
+  const lines = 30;
+  const powerlines = lines * 2 -4;
+  const terminallines = lines * 5;
+
   return (
-    <div>
+    <main>
       <Head>
         <title>İnteraktif Breadboard</title>
         <meta name="description" content="Baha Utku Bilge Bitirme Projesi" />
@@ -14,19 +19,35 @@ export default function Home() {
         <p className='app-title'>İnteraktif Breadboard</p>
         <p>Baha Utku Bilge Tasarım Bitirme Projesi</p>
       </header>
-      
-      <div className='Board'>
-        <div className='Divit'/>
-        <div className='Line'style={{top:"3%"}}/>
-        <div className='Line' style={{top:"85%"}}/>
 
-        <div></div>
-        
+      <div className='Board'>
+
+        <div className='PowerTab'>
+          <div className='PowerStrip'>
+            <Board count={powerlines} />
+          </div>
+        </div>
+
+        <div className='TerminalStrip'>
+          <Board count={terminallines} />
+        </div>
+        <div className='Divit' />
+        <div className='TerminalStrip'>
+          <Board count={terminallines} />
+        </div>
+        <div className='PowerTab'>
+          <div className='PowerStrip'>
+            <Board count={powerlines} />
+          </div>
+        </div>
+
       </div>
 
+      <div className="ToolBox"></div>
 
 
 
-    </div>
+
+    </main>
   )
 }

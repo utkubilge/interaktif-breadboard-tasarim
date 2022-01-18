@@ -18,8 +18,7 @@ function Bord(props) {
         div id = { props.id }
         onDrop = { drop }
         onDragOver = { dragOver }
-        className = { props.className } >
-        { props.children }
+        className = { props.className } > { props.children }
 
 
         <

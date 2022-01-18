@@ -7,7 +7,7 @@ function Card(props) {
 
         e.dataTransfer.setData("card_id", target.id);
 
-        setTimeout( () => {
+        setTimeout(() => {
             target.style.display = "none";
         }, 0);
 
@@ -17,16 +17,17 @@ function Card(props) {
         e.stopPropagation();
     }
 
-    return (
-        <div
-            id={props.id}
-            className={props.className}
-            onDragStart={dragStart}
-            onDragOver={dragOver}
-            draggable="true"
-        > 
-        {props.children}
-        </div>
+    return ( <
+        div id = { props.id }
+        className = { props.className }
+        onDragStart = { dragStart }
+        onDragOver = { dragOver }
+        draggable = "true"
+
+
+        >
+        { props.children } <
+        /div>
     )
 }
 export default Card
