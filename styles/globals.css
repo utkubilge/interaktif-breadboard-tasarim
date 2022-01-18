@@ -1,0 +1,61 @@
+html,
+body {
+    padding: 0;
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
+    background-color: #F5F5F7;
+}
+
+header .app-title {
+    font-family: Helvetica;
+    font-style: normal;
+    font-weight: 900;
+    font-size: 64px;
+    letter-spacing: 0.1em;
+    color: #FFFFFF;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    text-align: center;
+    margin: 10px;
+}
+
+header p {
+    font-size: 32px;
+    font-family: Helvetica;
+    font-style: normal;
+    text-align: center;
+    margin: 10px;
+    color: #FFFFFF;
+    text-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+}
+
+.main {
+    height: 100vh;
+    width: 100vw;
+    background-color: #F5F5F7;
+}
+
+.Board {
+    height: 600px;
+    width: 1500px;
+    background-color: #FFFFFF;
+    box-shadow: 2px 4px 12px #cacaca;
+    margin: auto;
+    margin-top: 30px;
+}
+
+.Divit {
+    height: 5%;
+    width: auto;
+    background-color: #F5F5F7;
+    position: relative;
+    top: 45%;
+    box-shadow: inset 2px 4px 12px #cacaca;
+}
+
+.Line {
+    height: 1%;
+    width: auto;
+    background-color: #F5F5F7;
+    position: relative;
+    box-shadow: inset 1px 1px 2px #cacaca;
+}
