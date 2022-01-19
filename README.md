@@ -34,3 +34,13 @@
 ### Faz 3+:
 - Arduino entegrasyonu ve compiler ekleme
 - dark mode ekleme
+
+## Projede Kullanılan Teknolojiler:
+- Orta katman: React.js Next.js
+- Sunucu platformu: NodeJS
+- Veritabanı-Bulut Veritabanı: Firebase
+- Programlama Dili: Javascript
+- Sürüm Kontrolü: Git
+- Bulut Uygulama Platformu: Vercel
+- Haberleşme: REST API
+- Arayüz Çatısı: React.js
