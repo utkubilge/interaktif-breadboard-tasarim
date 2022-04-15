@@ -1,11 +1,15 @@
 import Head from 'next/head';
-import Card from "./components/Card";
 import Board from "./components/Board";
+import Dragable from "./components/DraggableComponent";
+import React from 'react';
+
+
 
 export default function Home() {
   const lines = 30;
-  const powerlines = lines * 2 -4;
+  const powerlines = lines * 2 - 4;
   const terminallines = lines * 5;
+
 
   return (
     <main>
@@ -43,7 +47,15 @@ export default function Home() {
 
       </div>
 
-      <div className="ToolBox"></div>
+      <div className="ToolBox">
+        <Dragable/>
+        <p>&nbsp;&nbsp;</p>
+        <Dragable/>
+        <p>&nbsp;&nbsp;</p>
+        <Dragable/>
+        <p>&nbsp;&nbsp;</p>
+        <Dragable/>
+      </div>
 
 
 

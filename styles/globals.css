@@ -3,7 +3,7 @@ body {
     padding: 0;
     margin: 0;
     font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-    background-color: #F5F5F7;
+    background-color: #40444b;
 }
 
 header .app-title {
@@ -12,8 +12,8 @@ header .app-title {
     font-weight: 900;
     font-size: 64px;
     letter-spacing: 0.1em;
-    color: #dfdfdf;
-    text-shadow: 1px 1px white, -1px -1px #444;
+    color: #ffffff;
+    /* text-shadow: 1px 1px white, 1px 1px #444; */
     text-align: center;
     margin: 10px;
 }
@@ -24,8 +24,8 @@ header p {
     font-weight: 200;
     text-align: center;
     margin: 10px;
-    color: #dfdfdf;
-    text-shadow: 1px 1px 5px white, -1px -1px #444;
+    color: #ffffff;
+    /* text-shadow: 1px 1px 5px white, -1px -1px #444; */
 }
 
 .main {
@@ -39,6 +39,7 @@ header p {
     width: 940px;
     margin: auto;
     margin-top: 5%;
+    background-color: #F5F5F7;
 }
 
 .Divit {
@@ -54,6 +55,10 @@ header p {
     background-color: #888888;
     box-shadow: inset 0 0 5px 4px #cacaca;
     margin: 7.5px;
+}
+
+.Hole[key=5] {
+    background-color: #af2323;
 }
 
 .PowerStrip {
@@ -104,4 +109,24 @@ header p {
     left: 50%;
     transform: translateX(-50%);
     box-shadow: 2px 4px 12px #cacaca;
+    display: flex;
+    padding: 20px;
+}
+
+.ic {
+    height: 20px;
+    width: 60px;
+    background-color: black;
+    box-shadow: 2px 4px 12px #cacaca;
+    position: absolute;
+}
+
+.dragobj {
+    width: 100px;
+    height: 50px;
+    background: #221c12;
+    color: #FFFFFF;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
