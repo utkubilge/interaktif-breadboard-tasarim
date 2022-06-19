@@ -16,10 +16,10 @@
 
 ### Faz 1:
 - Figma ile genel tasarım
-  - ✅ Ben Buradayım
 - JS mouse event ile obje sürükleme
 - Custom ses ve minimal box-shadow tasarım
 - Lojik
+  - ✅ Ben Buradayım
 - Kullanıcı sayfası üzerine kayıtlı kalma
 
 ### Faz 2:
