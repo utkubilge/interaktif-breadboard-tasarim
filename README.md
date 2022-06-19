@@ -1,7 +1,10 @@
 # interaktif-breadboard-tasarim
  Baha Utku Bilge SDÜ Bitirme Projesi, İnteraktif Sanal Breadboard
  
- Uygulama Linki: https://interaktif-breadboard-tasarim.vercel.app/
+ Anlık Çalışan Uygulama Linki: https://interaktif-breadboard-tasarim.vercel.app/
+ 
+ 
+ Proje grafik tasarımı Figma linki: https://www.figma.com/file/R9TL2EsTNrKAqXrzkokgql/BreadboardDesign?node-id=0%3A1
 
 ## Proje Yol Haritası:
 
