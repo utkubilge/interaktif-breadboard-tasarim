@@ -1,47 +1,48 @@
 <svg width="212" height="97" viewBox="0 0 212 97" fill="none" xmlns="http://www.w3.org/2000/svg">
 <rect y="5" width="212" height="90" fill="black"/>
 <g filter="url(#filter0_i_3_1139)">
-<rect x="37" width="10" height="8" fill="#BABABA"/>
+<rect x="37" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter1_i_3_1139)">
-<rect x="197" y="1" width="10" height="8" fill="#BABABA"/>
+<rect x="197" y="1" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter2_i_3_1139)">
-<rect x="5" y="1" width="10" height="8" fill="#BABABA"/>
+<rect x="5" y="1" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter3_i_3_1139)">
-<rect x="101" y="1" width="10" height="8" fill="#BABABA"/>
+<rect x="101" y="1" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter4_i_3_1139)">
-<rect x="165" y="1" width="10" height="8" fill="#BABABA"/>
+<rect x="165" y="1" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter5_i_3_1139)">
-<rect x="133" y="1" width="10" height="8" fill="#BABABA"/>
+<rect x="133" y="1" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter6_i_3_1139)">
-<rect x="69" width="10" height="8" fill="#BABABA"/>
+<rect x="69" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter7_i_3_1139)">
-<rect x="37" y="88" width="10" height="8" fill="#BABABA"/>
+<rect x="37" y="88" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter8_i_3_1139)">
-<rect x="197" y="89" width="10" height="8" fill="#BABABA"/>
+<rect x="197" y="89" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter9_i_3_1139)">
-<rect x="5" y="89" width="10" height="8" fill="#BABABA"/>
+<rect x="5" y="89" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter10_i_3_1139)">
-<rect x="101" y="89" width="10" height="8" fill="#BABABA"/>
+<rect x="101" y="89" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter11_i_3_1139)">
-<rect x="165" y="89" width="10" height="8" fill="#BABABA"/>
+<rect x="165" y="89" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter12_i_3_1139)">
-<rect x="133" y="89" width="10" height="8" fill="#BABABA"/>
+<rect x="133" y="89" width="10" height="8" fill="#DBDBDB"/>
 </g>
 <g filter="url(#filter13_i_3_1139)">
-<rect x="69" y="88" width="10" height="8" fill="#BABABA"/>
+<rect x="69" y="88" width="10" height="8" fill="#DBDBDB"/>
 </g>
+<path d="M1 30C9.28427 30 16 36.7157 16 45V55C16 63.2843 9.28427 70 1 70V30Z" fill="#323232"/>
 <defs>
 <filter id="filter0_i_3_1139" x="37" y="0" width="10" height="12" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
 <feFlood flood-opacity="0" result="BackgroundImageFix"/>

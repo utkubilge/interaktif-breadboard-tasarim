@@ -17,7 +17,7 @@ for(let i=0;i<30;i++) {
 
 const ic1c = {x:1080, y:30, width:212, height:97};
 const ic2c = {x:1080, y:30+97   + 20, length:212, height:97};
-const ic3c = {x:1080, y:30+97*2 + 20, length:212, height:97};
+const ic3c = {x:1080, y:30+97*2 + 20*2, length:212, height:97};
 const ic4c = {x:1080, y:30+97*3 + 20, length:212, height:97};
 
 
@@ -32,35 +32,34 @@ export default function Board() {
             const canvas = canvasRef.current;
             const ctx = canvas.getContext("2d");
 
-            //board render
+            //board prerender
             ctx.fillStyle = "#c6c6c8";
             ctx.fillRect(0,0, canvas.width, canvas.height);
             const background = new Sprite(0, 0, 'breadboard.svg');
             background.draw(ctx);
+            //ic prerender
             const ic1 = new Sprite(ic1c.x, ic1c.y, 'ic.svg');
             ic1.draw(ctx);
+            const ic2 = new Sprite(ic2c.x, ic2c.y, 'ic.svg');
+            ic2.draw(ctx);
+            const ic3 = new Sprite(ic3c.x, ic3c.y, 'ic.svg');
+            ic3.draw(ctx);
 
-
-            for (let i = 0; i < PIECES.length; i++) {
-                PIECES[i].draw(ctx)
-            }
+            //render wire first
             for (let i = 0; i < WIRES.length; i++) {
                 WIRES[i].draw(ctx)
             }
             if (SELECTED_WIRE != null) {
-                    SELECTED_WIRE.draw(ctx);
+                SELECTED_WIRE.draw(ctx);
             }
+            //render pieces
+            for (let i = 0; i < PIECES.length; i++) {
+                PIECES[i].draw(ctx)
+            }
+            
+            
 
-            // for (let i = 0; i < PIECES.length; i++) {
-            //     PIECES[i].draw(ctx);
-            // }
-            // for (let i = 0; i < WIRES.length; i++) {
-            //     WIRES[i].draw(ctx);
-            // }
-            // if (SELECTED_WIRE != null) {
-            //     SELECTED_WIRE.draw(ctx);
-            // }
-            //console.log("rendering")
+            
             requestAnimationFrame(render);
         }
         render()
@@ -74,12 +73,27 @@ export default function Board() {
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
+            onTouchStart={onTouchStart}
+            onTouchMove={onTouchMove}
+            onTouchEnd={onTouchEnd}
         />
     );
 }
 
-
-
+//mobile function
+function onTouchStart(evt){
+	let loc={x:evt.touches[0].clientX,
+		y:evt.touches[0].clientY};
+	onMouseDown(loc);
+}
+function onTouchMove(evt){
+	let loc={x:evt.touches[0].clientX,
+		y:evt.touches[0].clientY};
+	onMouseMove(loc);
+}
+function onTouchEnd(){
+	onMouseUp();
+}
 
 
 function onMouseDown(evt) {
@@ -130,6 +144,10 @@ function onMouseUp(evt) {
     } else if (SELECTED_WIRE != null) {
         WIRES.pop()
         SELECTED_WIRE = null;
+    }
+    if (evt.clientX > 1020 && evt.clientX < 1500 && SELECTED_PIECE !=null) {
+    PIECES.splice(PIECES.indexOf(SELECTED_PIECE),1 )
+
     }
     SELECTED_PIECE = null;
     
