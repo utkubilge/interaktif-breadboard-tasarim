@@ -15,6 +15,11 @@ for(let i=0;i<30;i++) {
     DIVITS.push({x: 34+i*32, y: 126+j*32})
 }
 
+const ic1c = {x:1080, y:30, width:212, height:97};
+const ic2c = {x:1080, y:30+97   + 20, length:212, height:97};
+const ic3c = {x:1080, y:30+97*2 + 20, length:212, height:97};
+const ic4c = {x:1080, y:30+97*3 + 20, length:212, height:97};
+
 
 export default function Board() {
 
@@ -28,9 +33,14 @@ export default function Board() {
             const ctx = canvas.getContext("2d");
 
             //board render
-
+            ctx.fillStyle = "#c6c6c8";
+            ctx.fillRect(0,0, canvas.width, canvas.height);
             const background = new Sprite(0, 0, 'breadboard.svg');
             background.draw(ctx);
+            const ic1 = new Sprite(ic1c.x, ic1c.y, 'ic.svg');
+            ic1.draw(ctx);
+
+
             for (let i = 0; i < PIECES.length; i++) {
                 PIECES[i].draw(ctx)
             }
@@ -59,8 +69,8 @@ export default function Board() {
     return (
         <canvas
             ref={canvasRef}
-            height="618"
-            width="1014"
+            height="608"
+            width="1500"
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
@@ -73,12 +83,16 @@ export default function Board() {
 
 
 function onMouseDown(evt) {
+    //logging
     console.log(evt.clientX + " " + evt.clientY)
 
-    if (evt.nativeEvent.which === 2) {
-        PIECES.push(new Piece(evt.clientX, evt.clientY, 'ic.svg'));
-    } else //devtool
+    //handle copying
+    handleCopying(evt);
+    // if (evt.nativeEvent.which === 2) {
+    //     PIECES.push(new Piece(evt.clientX, evt.clientY, 'ic.svg'));
+    // } else 
 
+    //wire drawing
     SELECTED_DIVIT = getPressedDivit(evt);
     console.log(SELECTED_DIVIT)
     if(SELECTED_DIVIT != null && SELECTED_WIRE == null) {
@@ -120,6 +134,16 @@ function onMouseUp(evt) {
     SELECTED_PIECE = null;
     
 
+}
+
+function handleCopying(evt) {
+    //ic1
+    if (evt.clientX > ic1c.x && evt.clientX < ic1c.x + ic1c.width &&
+        evt.clientY > ic1c.y && evt.clientY < ic1c.y + ic1c.height && SELECTED_PIECE == null) {
+        console.log("succeeded")
+        SELECTED_PIECE = new Piece(evt.clientX-ic1c.width/2, evt.clientY-ic1c.height/2, 'ic.svg')
+        PIECES.push(SELECTED_PIECE);
+    }
 }
 
 function getPressedDivit(evt) {
