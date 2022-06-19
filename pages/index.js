@@ -1,6 +1,5 @@
 import Head from 'next/head'
-import Board from "./comps/Board"
-import React, { useEffect, useRef } from "react";
+import Board from "../comps/Board"
 
 export default function Home() {
   return (
