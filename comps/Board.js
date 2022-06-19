@@ -82,13 +82,13 @@ export default function Board() {
 
 //mobile function
 function onTouchStart(evt){
-	let loc={x:evt.touches[0].clientX,
-		y:evt.touches[0].clientY};
+	let loc={clientX:evt.touches[0].clientX,
+		clientY:evt.touches[0].clientY};
 	onMouseDown(loc);
 }
 function onTouchMove(evt){
-	let loc={x:evt.touches[0].clientX,
-		y:evt.touches[0].clientY};
+	let loc={clientX:evt.touches[0].clientX,
+		clientY:evt.touches[0].clientY};
 	onMouseMove(loc);
 }
 function onTouchEnd(){
