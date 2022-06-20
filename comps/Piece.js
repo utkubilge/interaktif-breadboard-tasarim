@@ -1,7 +1,7 @@
 
 
 export default class Piece {
-    constructor(x, y, h, w, imageSrc) {
+    constructor(x, y, w, h, imageSrc) {
         this.x = x;
         this.y = y;
         this.height = h

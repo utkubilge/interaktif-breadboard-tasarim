@@ -13,20 +13,37 @@ const DIVITS = [];
 
 let LOGIC = []
 
+//first row
 for (let i = 0; i < 30; i++) {
     for (let j = 0; j < 5; j++)
         DIVITS.push({ x: 34 + i * 32, y: 126 + j * 32 })
 }
-
+//second row
 for (let i = 0; i < 30; i++) {
     for (let j = 0; j < 5; j++)
         DIVITS.push({ x: 34 + i * 32, y: 341 + j * 32 })
 }
+//first io
+for (let j1 = 0; j1 < 2; j1++) {
+    for(let i1 =0; i1 < 5; i1++)
+    for (let i = 0; i < 5; i++)
+        DIVITS.push({ x: 64 + i*32 + i1*186, y: 22 + j1*32})
+}
+//second io
+for (let j1 = 0; j1 < 2; j1++) {
+    for(let i1 =0; i1 < 5; i1++)
+    for (let i = 0; i < 5; i++)
+        DIVITS.push({ x: 64 + i*32 + i1*186, y: 537 + j1*32})
+}
+
 
 const ic1c = { x: 1080, y: 30, width: 212, height: 97 };
 const ic2c = { x: 1080, y: 30 + 97 + 20, length: 212, height: 97 };
 const ic3c = { x: 1080, y: 30 + 97 * 2 + 20 * 2, length: 212, height: 97 };
 const ic4c = { x: 1080, y: 30 + 97 * 3 + 20, length: 212, height: 97 };
+
+const led1c = { x: 1372, y: 50, width: 32, height: 61 };
+const switch1c = { x: 1345, y: 170, width: 100, height: 45 };
 
 
 
@@ -38,17 +55,19 @@ export default function Board() {
     //wait for it to mount with useEffect
     useEffect(() => {
 
-        const background = new Sprite(0, 0, 'breadboard.svg');
+        //prerender
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
+        const background = new Sprite(0, 0, 'breadboard.svg');
         const ic1 = new Sprite(ic1c.x, ic1c.y, 'ic.svg');
         const ic2 = new Sprite(ic2c.x, ic2c.y, 'ic.svg');
         const ic3 = new Sprite(ic3c.x, ic3c.y, 'ic.svg');
+        const led1 = new Sprite(led1c.x, led1c.y, 'ledoff.svg');
+        const switch1 = new Sprite(switch1c.x, switch1c.y, 'switchoff.svg');
 
         //very scary loop oooh
         function render() {
-
-
+            
             //board prerender
             ctx.fillStyle = "#c6c6c8";
             ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -57,6 +76,8 @@ export default function Board() {
             ic1.draw(ctx);
             ic2.draw(ctx);
             ic3.draw(ctx);
+            led1.draw(ctx);
+            switch1.draw(ctx);
 
 
             //render wire first
@@ -127,7 +148,9 @@ function onMouseDown(evt) {
 
     //divit select
     SELECTED_DIVIT = getPressedDivit(evt);
-    //console.log(SELECTED_DIVIT)
+    if(SELECTED_DIVIT != null ) {
+    console.log("selected divit: " + SELECTED_DIVIT.x + " " + SELECTED_DIVIT.y)
+    }
 
     //wire trashing
     let fullwire = null;
@@ -194,8 +217,20 @@ function handleCopying(evt) {
     //ic1
     if (evt.clientX > ic1c.x && evt.clientX < ic1c.x + ic1c.width &&
         evt.clientY > ic1c.y && evt.clientY < ic1c.y + ic1c.height && SELECTED_PIECE == null) {
-        console.log("succeeded")
-        SELECTED_PIECE = new Piece(evt.clientX - ic1c.width / 2, evt.clientY - ic1c.height / 2, 97, 205, 'ic.svg')
+        
+        SELECTED_PIECE = new Piece(evt.clientX - ic1c.width / 2, evt.clientY - ic1c.height / 2, ic1c.width, ic1c.height, 'ic.svg')
+        PIECES.push(SELECTED_PIECE);
+    }
+    if (evt.clientX > led1c.x && evt.clientX < led1c.x + led1c.width &&
+        evt.clientY > led1c.y && evt.clientY < led1c.y + led1c.height && SELECTED_PIECE == null) {
+        
+        SELECTED_PIECE = new Piece(evt.clientX - led1c.width / 2, evt.clientY - led1c.height / 2, led1c.width, led1c.height, 'ledoff.svg')
+        PIECES.push(SELECTED_PIECE);
+    }
+    if (evt.clientX > switch1c.x && evt.clientX < switch1c.x + switch1c.width &&
+        evt.clientY > switch1c.y && evt.clientY < switch1c.y + switch1c.height && SELECTED_PIECE == null) {
+        
+        SELECTED_PIECE = new Piece(evt.clientX - switch1c.width / 2, evt.clientY - switch1c.height / 2, switch1c.width, switch1c.height, 'switchoff.svg')
         PIECES.push(SELECTED_PIECE);
     }
 }
