@@ -1,11 +1,11 @@
 
 
 export default class Piece {
-    constructor(x, y, imageSrc) {
+    constructor(x, y, h, w, imageSrc) {
         this.x = x;
         this.y = y;
-        this.height = 97
-        this.width = 205
+        this.height = h
+        this.width = w
         this.image = new Image();
         this.image.src = imageSrc;
     }
