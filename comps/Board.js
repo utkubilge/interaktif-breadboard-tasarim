@@ -33,6 +33,7 @@ for (let j1 = 0; j1 < 2; j1++) {
             DIVITS.push({ x: 64 + i * 32 + i1 * 186, y: 22 + j1 * 32 , cnt: null, val: true})
         }
 }
+
 //second io
 for (let j1 = 0; j1 < 2; j1++) {
     for (let i1 = 0; i1 < 5; i1++)
