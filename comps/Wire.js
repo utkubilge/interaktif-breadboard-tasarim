@@ -6,7 +6,7 @@ export default class Wire {
         this.y = y;
         this.x1 = x1;
         this.y1 = y1;
-        this.radius = 6
+        this.radius = 6;
     }
     draw(ctx) {
         ctx.beginPath();

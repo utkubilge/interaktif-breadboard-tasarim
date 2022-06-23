@@ -2,6 +2,8 @@ import React, { useEffect, useRef, useState } from "react";
 import Piece from "./Piece";
 import Wire from "./Wire";
 import Sprite from "./Sprite";
+import Lane from "./Lane";
+import Led from "./Led";
 
 let PIECES = [];
 let WIRES = [];
@@ -10,27 +12,39 @@ let SELECTED_WIRE = null;
 let SELECTED_DIVIT = null;
 let OLD_DIVIT = null;
 const DIVITS = [];
+//LOGIC n p a1 a2 , b1 b2 n p
 
-let LOGIC = []
+let LANES = []
+for (let index = 0; index < 60; index++) {
+    LANES.push(new Lane(index, null, false))
+}
+LANES.push(new Lane(60, false, true))
+LANES.push(new Lane(61, true, true))
 
+
+//specialfunc
+//n:60, p:61
+// 0 1 2 3.. 29
+//30 31 
+//cnt: connections, val: true for pos, false for neg, io: immuteable wire true
 //first row
 for (let i = 0; i < 30; i++) {
     for (let j = 0; j < 5; j++)
-        DIVITS.push({ x: 34 + i * 32, y: 126 + j * 32 , cnt: null, val: null})
+        DIVITS.push({ x: 34 + i * 32, y: 126 + j * 32, lan: i })
 }
 //second row
 for (let i = 0; i < 30; i++) {
     for (let j = 0; j < 5; j++)
-        DIVITS.push({ x: 34 + i * 32, y: 341 + j * 32 , cnt: null, val: null})
+        DIVITS.push({ x: 34 + i * 32, y: 341 + j * 32, lan: i + 30 })
 }
 //first io
 for (let j1 = 0; j1 < 2; j1++) {
     for (let i1 = 0; i1 < 5; i1++)
         for (let i = 0; i < 5; i++) {
-            if(j1 === 0)
-            DIVITS.push({ x: 64 + i * 32 + i1 * 186, y: 22 + j1 * 32 , cnt: null, val: false})
+            if (j1 === 0)
+                DIVITS.push({ x: 64 + i * 32 + i1 * 186, y: 22 + j1 * 32, lan: 60 })
             else
-            DIVITS.push({ x: 64 + i * 32 + i1 * 186, y: 22 + j1 * 32 , cnt: null, val: true})
+                DIVITS.push({ x: 64 + i * 32 + i1 * 186, y: 22 + j1 * 32, lan: 61 })
         }
 }
 
@@ -38,17 +52,17 @@ for (let j1 = 0; j1 < 2; j1++) {
 for (let j1 = 0; j1 < 2; j1++) {
     for (let i1 = 0; i1 < 5; i1++)
         for (let i = 0; i < 5; i++)
-        if(j1 === 0)
-            DIVITS.push({ x: 64 + i * 32 + i1 * 186, y: 537 + j1 * 32 , cnt: null, val: false})
+            if (j1 === 0)
+                DIVITS.push({ x: 64 + i * 32 + i1 * 186, y: 537 + j1 * 32, lan: 60 })
             else
-            DIVITS.push({ x: 64 + i * 32 + i1 * 186, y: 537 + j1 * 32 , cnt: null, val: true})
+                DIVITS.push({ x: 64 + i * 32 + i1 * 186, y: 537 + j1 * 32, lan: 61 })
 }
+
 
 
 const ic1c = { x: 1080, y: 30, width: 212, height: 97 };
 const ic2c = { x: 1080, y: 30 + 97 + 20, width: 212, height: 97 };
 const ic3c = { x: 1080, y: 30 + 97 * 2 + 20 * 2, width: 212, height: 97 };
-//const ic4c = { x: 1080, y: 30 + 97 * 3 + 20, width: 212, height: 97 };
 
 const led1c = { x: 1372, y: 50, width: 32, height: 61 };
 const switch1c = { x: 1345, y: 170, width: 100, height: 45 };
@@ -99,6 +113,19 @@ export default function Board() {
             for (let i = 0; i < PIECES.length; i++) {
                 PIECES[i].draw(ctx)
             }
+
+            //LOGIC
+            //reset validated
+            // LANES.forEach(element => {
+            //     element.validated = false;
+            // });
+            
+            //LANES[61].validatorP()
+            //console.log(LANES[0].val)
+
+
+
+            //render
             requestAnimationFrame(render);
         }
         render()
@@ -119,7 +146,34 @@ export default function Board() {
     );
 }
 
-//mobile function
+function validateN(lane) {
+    if (lane.validated != true) {
+        lane.validated = true;
+        lane.val = false;
+        if (lane.con != null) {
+            
+            lane.con.forEach(e => {
+                validateN(LANES[e])
+                
+            });
+        }
+    }
+}
+function validateP(lane) {
+    if (lane.validated != true) {
+        lane.validated = true;
+        lane.val = true;
+        if (lane.con != null) {
+            
+            lane.con.forEach(e => {
+                validateP(LANES[e])
+                
+            });
+        }
+    }
+}
+
+//mobile function TODO
 function onTouchStart(evt) {
     if (!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement)) {
         document.documentElement.requestFullscreen()
@@ -143,11 +197,11 @@ function onTouchEnd() {
     onMouseUp();
 }
 
-
+//MOUSEDOWN
 function onMouseDown(evt) {
 
     //logging coords
-    console.log(evt.clientX + " " + evt.clientY)
+    //console.log(evt.clientX + " " + evt.clientY)
 
     //handle copying pieces
     handleCopying(evt);
@@ -156,30 +210,33 @@ function onMouseDown(evt) {
 
     //divit select
     SELECTED_DIVIT = getPressedDivit(evt);
-    if (SELECTED_DIVIT != null) {
-        console.log("selected divit: " + SELECTED_DIVIT.x + " " + SELECTED_DIVIT.y)
-    }
-    
+    //divit logging
+    // if (SELECTED_DIVIT != null) {
+    //     console.log("selected divit: " + SELECTED_DIVIT.x + " " + SELECTED_DIVIT.y + "\nval: " + SELECTED_DIVIT.val)
+    // }
+
     //wire trashing
-    
-        let fullwire = null;
-        if (SELECTED_DIVIT != null) {
-            fullwire = getPressedWire(SELECTED_DIVIT)
-        }
-        if (fullwire != null) {
-            WIRES.splice(WIRES.indexOf(fullwire), 1)
-        }
+    let fullwire = null;
+    if (SELECTED_DIVIT != null) {
+        fullwire = getPressedWire(SELECTED_DIVIT)
+    }
+    if (fullwire != null) {
+        WIRES.splice(WIRES.indexOf(fullwire), 1)
+        //TODO
+        //LANES[OLD_DIVIT.lan].con.splice(LANES.indexOf(LANES[SELECTED_DIVIT.lan]), 1)
+        //LANES[SELECTED_DIVIT.lan].con.splice(LANES.indexOf(LANES[OLD_DIVIT.lan]), 1)
+    }
 
-        //wire drawing
-        if (SELECTED_DIVIT != null && SELECTED_WIRE == null) {
-            OLD_DIVIT = SELECTED_DIVIT;
-            SELECTED_WIRE = new Wire(evt.clientX, evt.clientY, evt.clientX, evt.clientY)
-            WIRES.push(SELECTED_WIRE);
-        }
+    //wire drawing
+    if (SELECTED_DIVIT != null && SELECTED_WIRE == null && SELECTED_PIECE == null) {
+        OLD_DIVIT = SELECTED_DIVIT;
+        SELECTED_WIRE = new Wire(evt.clientX, evt.clientY, evt.clientX, evt.clientY)
+        WIRES.push(SELECTED_WIRE);
+    }
 
-    
 
-    
+
+
     if (SELECTED_PIECE != null) {
         const index = PIECES.indexOf(SELECTED_PIECE);
         SELECTED_PIECE.offset = {
@@ -200,9 +257,19 @@ function onMouseMove(evt) {
     }
 }
 
+//MOUSEUP : LOGIC
 function onMouseUp(evt) {
     SELECTED_DIVIT = getPressedDivit(evt);
-    if (SELECTED_DIVIT != null && OLD_DIVIT !== SELECTED_DIVIT) {
+    //wire drawing
+    if (SELECTED_DIVIT != null && OLD_DIVIT != SELECTED_DIVIT && SELECTED_PIECE == null) {
+
+        //logic handle
+        //console.log("wire drawn " + OLD_DIVIT.lan +" " + SELECTED_DIVIT.lan)
+        LANES[OLD_DIVIT.lan].con.push(SELECTED_DIVIT.lan)
+        LANES[SELECTED_DIVIT.lan].con.push(OLD_DIVIT.lan)
+        //console.log(LANES[0].con)
+        console.log(LANES)
+
         SELECTED_WIRE = null;
     } else if (SELECTED_WIRE != null) {
         WIRES.pop()
@@ -212,10 +279,15 @@ function onMouseUp(evt) {
     if (evt.clientX > 1020 && evt.clientX < 1500 && SELECTED_PIECE != null) {
         PIECES.splice(PIECES.indexOf(SELECTED_PIECE), 1)
 
+
     }
     SELECTED_PIECE = null;
-    //OLD_DIVIT=null;
-
+    //board logic calculate
+    LANES.forEach(e => {
+        e.validated = false;
+    });
+    validateN(LANES[60])
+    validateP(LANES[61])
 }
 
 //handle piece copying
@@ -243,9 +315,10 @@ function handleCopying(evt) {
     if (evt.clientX > led1c.x && evt.clientX < led1c.x + led1c.width &&
         evt.clientY > led1c.y && evt.clientY < led1c.y + led1c.height && SELECTED_PIECE == null) {
 
-        SELECTED_PIECE = new Piece(evt.clientX - led1c.width / 2, evt.clientY - led1c.height / 2, led1c.width, led1c.height, 'ledoff.svg')
+        SELECTED_PIECE = new Led(evt.clientX - led1c.width / 2, evt.clientY - led1c.height / 2, led1c.width, led1c.height, 'ledoff.svg', 'ledon.svg')
         PIECES.push(SELECTED_PIECE);
     }
+    //switch
     if (evt.clientX > switch1c.x && evt.clientX < switch1c.x + switch1c.width &&
         evt.clientY > switch1c.y && evt.clientY < switch1c.y + switch1c.height && SELECTED_PIECE == null) {
 
