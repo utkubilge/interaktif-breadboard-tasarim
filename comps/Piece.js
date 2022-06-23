@@ -9,7 +9,7 @@ export default class Piece {
         this.image = new Image();
         this.image.src = imageSrc;
     }
-    draw(ctx) {
+    draw(ctx, LANES=null) {
         ctx.drawImage(this.image, this.x, this.y)
     }
 }

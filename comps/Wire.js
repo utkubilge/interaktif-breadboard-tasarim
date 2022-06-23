@@ -1,12 +1,14 @@
 
 
 export default class Wire {
-    constructor(x, y, x1, y1) {
+    constructor(x, y, x1, y1, div1) {
         this.x = x;
         this.y = y;
         this.x1 = x1;
         this.y1 = y1;
         this.radius = 6;
+        this.div1 = div1;
+        this.div2 = null;
     }
     draw(ctx) {
         ctx.beginPath();
