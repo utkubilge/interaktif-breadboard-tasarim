@@ -11,7 +11,14 @@ export default class Switch {
         this.Llane = null;
         this.Mlane = null;
         this.Rlane = null;
+        this.LlaneO = null;
+        this.MlaneO = null;
+        this.RlaneO = null;
+        this.pluged = false;
+        this.changed = false;
+        this.isNew = true;
         this.on = false;
+        this.oldDiv = null;
 
     }
     draw(ctx, LANES) {

@@ -110,6 +110,29 @@ export default function Board() {
             led3.draw(ctx);
             switch1.draw(ctx);
 
+            //highlighting
+            if (SELECTED_DIVIT != null && SELECTED_PIECE != null) {
+                ctx.strokeStyle = "yellow";
+                ctx.lineWidth = 4;
+                ctx.strokeRect(SELECTED_DIVIT.x, SELECTED_DIVIT.y, 20, 20)
+                if (SELECTED_PIECE instanceof Led) {
+                    ctx.strokeRect(SELECTED_DIVIT.x + 32, SELECTED_DIVIT.y, 20, 20)
+                }
+                if (SELECTED_PIECE instanceof Switch) {
+                    ctx.strokeRect(SELECTED_DIVIT.x + 32, SELECTED_DIVIT.y, 20, 20)
+                    ctx.strokeRect(SELECTED_DIVIT.x + 64, SELECTED_DIVIT.y, 20, 20)
+                }
+            }
+            if (SELECTED_DIVIT != null) {
+                ctx.strokeStyle = "red";
+                ctx.lineWidth = 4;
+                ctx.strokeRect(SELECTED_DIVIT.x, SELECTED_DIVIT.y, 20, 20)
+            }
+            if (SELECTED_DIVIT != null && SELECTED_WIRE != null) {
+                ctx.strokeStyle = "red";
+                ctx.lineWidth = 4;
+                ctx.strokeRect(SELECTED_DIVIT.x, SELECTED_DIVIT.y, 20, 20)
+            }
 
             //render wire first
             for (let i = 0; i < WIRES.length; i++) {
@@ -146,33 +169,7 @@ export default function Board() {
     );
 }
 
-function validateN(lane) {
-    if (lane.validated != true) {
-        lane.validated = true;
-        lane.val = false;
 
-        if (lane.con != null) {
-
-            lane.con.forEach(e => {
-                validateN(LANES[e])
-
-            });
-        }
-    }
-}
-function validateP(lane) {
-    if (lane.validated != true) {
-        lane.validated = true;
-        lane.val = true;
-        if (lane.con != null) {
-
-            lane.con.forEach(e => {
-                validateP(LANES[e])
-
-            });
-        }
-    }
-}
 
 //mobile function TODO
 function onTouchStart(evt) {
@@ -203,12 +200,16 @@ function onDoubleClick(evt) {
     SELECTED_PIECE = getPressedPiece(evt);
     if (SELECTED_PIECE != null && SELECTED_PIECE instanceof Switch) {
         SELECTED_PIECE.on = !SELECTED_PIECE.on;
+        SELECTED_PIECE.changed = true;
     }
     SELECTED_PIECE = null;
+    validate()
 }
 
 //MOUSEDOWN
 function onMouseDown(evt) {
+    console.log("down")
+
 
     //logging coords
     console.log(evt.clientX + " " + evt.clientY)
@@ -255,27 +256,35 @@ function onMouseDown(evt) {
 
 }
 
+//MOUSEMOVE
 function onMouseMove(evt) {
+    //piece movement
     if (SELECTED_PIECE != null) {
         SELECTED_PIECE.x = evt.clientX - SELECTED_PIECE.offset.x;
         SELECTED_PIECE.y = evt.clientY - SELECTED_PIECE.offset.y;
+        if (SELECTED_PIECE instanceof Led)
+            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x, SELECTED_PIECE.offset.y - 50);
+        if (SELECTED_PIECE instanceof Switch)
+            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 20, SELECTED_PIECE.offset.y - 40);
+
     } else if (SELECTED_WIRE != null) {
         SELECTED_WIRE.x1 = evt.clientX;
         SELECTED_WIRE.y1 = evt.clientY;
-    }
+        SELECTED_DIVIT = getPressedDivit(evt);
+    } else
+        SELECTED_DIVIT = getPressedDivit(evt);
 }
 
 //MOUSEUP : LOGIC
 function onMouseUp(evt) {
-    SELECTED_DIVIT = getPressedDivit(evt);
+
     //piece logic
+    SELECTED_DIVIT = getPressedDivit(evt);
     if (SELECTED_PIECE != null) {
 
-
-        //leds
+        //Leds
         if (SELECTED_PIECE instanceof Led) {
-            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x, SELECTED_PIECE.offset.y-50);
-            console.log(SELECTED_DIVIT)
+            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x, SELECTED_PIECE.offset.y - 50);
             if (SELECTED_DIVIT != null) {
                 SELECTED_PIECE.Llane = SELECTED_DIVIT.lan;
                 SELECTED_PIECE.Rlane = SELECTED_DIVIT.lan + 1;
@@ -284,42 +293,28 @@ function onMouseUp(evt) {
                 SELECTED_PIECE.Rlane = null;
             }
         }
-        //switches TODO BROKEN
+
+        //Switches
         if (SELECTED_PIECE instanceof Switch) {
-            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x-20, SELECTED_PIECE.offset.y-10);
-            console.log(SELECTED_DIVIT)
+            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 20, SELECTED_PIECE.offset.y - 40);
+
+
             if (SELECTED_DIVIT != null) {
                 SELECTED_PIECE.Llane = SELECTED_DIVIT.lan;
                 SELECTED_PIECE.Mlane = SELECTED_DIVIT.lan + 1;
                 SELECTED_PIECE.Rlane = SELECTED_DIVIT.lan + 2;
-                if (SELECTED_PIECE.on == false) {
-                    LANES[SELECTED_PIECE.Rlane].con.splice(LANES[SELECTED_PIECE.Rlane].con.indexOf(SELECTED_PIECE.Mlane), 1)
-                    LANES[SELECTED_PIECE.Rlane].con.splice(LANES[SELECTED_PIECE.Rlane].con.indexOf(SELECTED_PIECE.Llane), 1)
-                    LANES[SELECTED_PIECE.Mlane].con.splice(LANES[SELECTED_PIECE.Mlane].con.indexOf(SELECTED_PIECE.Rlane), 1)
-                    LANES[SELECTED_PIECE.Mlane].con.splice(LANES[SELECTED_PIECE.Mlane].con.indexOf(SELECTED_PIECE.Llane), 1)
-                    LANES[SELECTED_PIECE.Llane].con.splice(LANES[SELECTED_PIECE.Llane].con.indexOf(SELECTED_PIECE.Mlane), 1)
-                    LANES[SELECTED_PIECE.Llane].con.splice(LANES[SELECTED_PIECE.Llane].con.indexOf(SELECTED_PIECE.Rlane), 1)
-                    
+                SELECTED_PIECE.pluged = true;
 
-                    LANES[SELECTED_PIECE.Llane].con.push(SELECTED_PIECE.Mlane)
-                    LANES[SELECTED_PIECE.Mlane].con.push(SELECTED_PIECE.Llane)
-                } else if (SELECTED_PIECE.on == true){
-                    LANES[SELECTED_PIECE.Rlane].con.splice(LANES[SELECTED_PIECE.Rlane].con.indexOf(SELECTED_PIECE.Mlane), 1)
-                    LANES[SELECTED_PIECE.Rlane].con.splice(LANES[SELECTED_PIECE.Rlane].con.indexOf(SELECTED_PIECE.Llane), 1)
-                    LANES[SELECTED_PIECE.Mlane].con.splice(LANES[SELECTED_PIECE.Mlane].con.indexOf(SELECTED_PIECE.Rlane), 1)
-                    LANES[SELECTED_PIECE.Mlane].con.splice(LANES[SELECTED_PIECE.Mlane].con.indexOf(SELECTED_PIECE.Llane), 1)
-                    LANES[SELECTED_PIECE.Llane].con.splice(LANES[SELECTED_PIECE.Llane].con.indexOf(SELECTED_PIECE.Mlane), 1)
-                    LANES[SELECTED_PIECE.Llane].con.splice(LANES[SELECTED_PIECE.Llane].con.indexOf(SELECTED_PIECE.Rlane), 1)
-                    
-                    LANES[SELECTED_PIECE.Rlane].con.push(SELECTED_PIECE.Mlane)
-                    LANES[SELECTED_PIECE.Mlane].con.push(SELECTED_PIECE.Rlane)
-                }
+
+
             } else {
                 SELECTED_PIECE.Llane = null;
                 SELECTED_PIECE.Mlane = null;
                 SELECTED_PIECE.Rlane = null;
+                SELECTED_PIECE.pluged = false;
             }
         }
+
 
     }
 
@@ -349,15 +344,81 @@ function onMouseUp(evt) {
     validate()
 
 }
-//VALIDATE (only thing that doesnt get reset is cons)
+
+//VALIDATE (only thing that doesnt get reset is cons) (and switch logic)
 function validate() {
     LANES.forEach(e => {
         e.validated = false;
         e.val = null
     });
+    //validate switches
+    PIECES.forEach(e => {
+        if (e instanceof Switch) {
+            if (e.pluged) {
+                if (e.isNew) {
+                    if (e.on) {
+                        LANES[e.Rlane].con.push(e.Mlane)
+                        LANES[e.Mlane].con.push(e.Rlane)
+                    } else {
+                        LANES[e.Llane].con.push(e.Mlane)
+                        LANES[e.Mlane].con.push(e.Llane)
+                    }
+                    e.isNew = false;
+                }
+                if (e.changed) {
+                    if (e.on) {
+                        LANES[e.Llane].con.splice(LANES[e.Llane].con.indexOf(e.Mlane), 1)
+                        LANES[e.Mlane].con.splice(LANES[e.Mlane].con.indexOf(e.Llane), 1)
+                        LANES[e.Rlane].con.push(e.Mlane)
+                        LANES[e.Mlane].con.push(e.Rlane)
+                    } else {
+                        LANES[e.Rlane].con.splice(LANES[e.Rlane].con.indexOf(e.Mlane), 1)
+                        LANES[e.Mlane].con.splice(LANES[e.Mlane].con.indexOf(e.Rlane), 1)
+                        LANES[e.Llane].con.push(e.Mlane)
+                        LANES[e.Mlane].con.push(e.Llane)
+                    }
+                    e.changed = false;
+                }
+
+            } else {
+
+            }
+        }
+
+    });
     validateN(LANES[60])
     validateP(LANES[61])
     console.log(LANES)
+}
+
+function validateN(lane) {
+    if (lane.validated != true) {
+        lane.validated = true;
+        if (lane.ioval != true)
+            lane.val = false;
+
+        if (lane.con != null) {
+            lane.con.forEach(e => {
+                validateN(LANES[e])
+
+            });
+        }
+    }
+}
+
+function validateP(lane) {
+    if (lane.validated != true) {
+        lane.validated = true;
+        if (lane.ioval != false)
+            lane.val = true;
+
+        if (lane.con != null) {
+            lane.con.forEach(e => {
+                validateP(LANES[e])
+
+            });
+        }
+    }
 }
 
 //handle piece copying
@@ -411,7 +472,9 @@ function handleCopying(evt) {
     }
 }
 
+//GETPRESSEDDIVIT
 function getPressedDivit(evt, offX = 0, offY = 0) {
+
     for (let i = 0; i < DIVITS.length; i++) {
         if (evt.clientX - offX > DIVITS[i].x && evt.clientX - offX < DIVITS[i].x + 20 &&
             evt.clientY - offY > DIVITS[i].y && evt.clientY - offY < DIVITS[i].y + 20) {
@@ -421,8 +484,7 @@ function getPressedDivit(evt, offX = 0, offY = 0) {
     return null;
 }
 
-
-
+//GETPRESSEDPIECE
 function getPressedPiece(evt) {
 
     for (let i = 0; i < PIECES.length; i++) {
@@ -434,8 +496,7 @@ function getPressedPiece(evt) {
     return null;
 }
 
-
-
+//GETPRESSEDWIRE
 function getPressedWire(divit) {
 
     for (let i = 0; i < WIRES.length; i++) {
