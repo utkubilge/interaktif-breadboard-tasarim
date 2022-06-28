@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from "react";
-import Piece from "./Piece";
 import Wire from "./Wire";
 import Sprite from "./Sprite";
 import Lane from "./Lane";
 import Led from "./Led";
 import Switch from "./Switch";
+import IcNotGate from "./IcNotGate";
+import IcAndGate from "./IcAndGate";
+import IcOrGate from "./IcOrGate";
+import SevenSeg from "./SevenSeg";
 
 let PIECES = [];
 let WIRES = [];
@@ -63,14 +66,15 @@ for (let j1 = 0; j1 < 2; j1++) {
 
 
 
-const ic1c = { x: 1080, y: 30, width: 212, height: 97 };
-const ic2c = { x: 1080, y: 30 + 97 + 20, width: 212, height: 97 };
-const ic3c = { x: 1080, y: 30 + 97 * 2 + 20 * 2, width: 212, height: 97 };
+const ic1c = { x: 1080, y: 30, width: 212, height: 100 };
+const ic2c = { x: 1080, y: 30 + 97 + 20, width: 212, height: 100 };
+const ic3c = { x: 1080, y: 30 + 97 * 2 + 20 * 2, width: 212, height: 100 };
 
 const led1c = { x: 1372 - 40, y: 50, width: 32, height: 61 };
 const led2c = { x: 1372, y: 50, width: 32, height: 61 };
 const led3c = { x: 1372 + 40, y: 50, width: 32, height: 61 };
 const switch1c = { x: 1345, y: 170, width: 100, height: 45 };
+const sevsegc = { x: 1330, y: 255, width: 148, height: 234 };
 
 
 
@@ -86,13 +90,14 @@ export default function Board() {
         const canvas = canvasRef.current;
         const ctx = canvas.getContext("2d");
         const background = new Sprite(0, 0, 'breadboard.svg');
-        const ic1 = new Sprite(ic1c.x, ic1c.y, 'ic.svg');
-        const ic2 = new Sprite(ic2c.x, ic2c.y, 'ic.svg');
-        const ic3 = new Sprite(ic3c.x, ic3c.y, 'ic.svg');
+        const ic1 = new Sprite(ic1c.x, ic1c.y, 'ic-not-gate.svg');
+        const ic2 = new Sprite(ic2c.x, ic2c.y, 'ic-and-gate.svg');
+        const ic3 = new Sprite(ic3c.x, ic3c.y, 'ic-or-gate.svg');
         const led1 = new Sprite(led1c.x, led1c.y, 'ledoff.svg');
         const led2 = new Sprite(led2c.x, led2c.y, 'ledoff2.svg');
         const led3 = new Sprite(led3c.x, led3c.y, 'ledoff3.svg');
         const switch1 = new Sprite(switch1c.x, switch1c.y, 'switchoff.svg');
+        const sevseg = new Sprite(sevsegc.x, sevsegc.y, "seven-seg-off.svg")
 
         //very scary loop oooh
         function render() {
@@ -109,6 +114,7 @@ export default function Board() {
             led2.draw(ctx);
             led3.draw(ctx);
             switch1.draw(ctx);
+            sevseg.draw(ctx);
 
             //highlighting
             if (SELECTED_DIVIT != null && SELECTED_PIECE != null) {
@@ -116,11 +122,30 @@ export default function Board() {
                 ctx.lineWidth = 4;
                 ctx.strokeRect(SELECTED_DIVIT.x, SELECTED_DIVIT.y, 20, 20)
                 if (SELECTED_PIECE instanceof Led) {
+                    ctx.strokeStyle = "blue";
                     ctx.strokeRect(SELECTED_DIVIT.x + 32, SELECTED_DIVIT.y, 20, 20)
+                }
+                if (SELECTED_PIECE instanceof SevenSeg) {
+                    for (let i = 0; i < 4; i++) {
+                        ctx.strokeRect(SELECTED_DIVIT.x + 32 * (i + 1), SELECTED_DIVIT.y, 20, 20)
+                    }
+                    for (let i = 0; i < 5; i++) {
+                        ctx.strokeRect(SELECTED_DIVIT.x + 32 * (i), SELECTED_DIVIT.y+218, 20, 20)
+                    }
                 }
                 if (SELECTED_PIECE instanceof Switch) {
                     ctx.strokeRect(SELECTED_DIVIT.x + 32, SELECTED_DIVIT.y, 20, 20)
                     ctx.strokeRect(SELECTED_DIVIT.x + 64, SELECTED_DIVIT.y, 20, 20)
+                }
+                if (SELECTED_PIECE instanceof IcNotGate || SELECTED_PIECE instanceof IcAndGate || SELECTED_PIECE instanceof IcOrGate) {
+                    for (let i = 0; i < 6; i++) {
+                        ctx.strokeRect(SELECTED_DIVIT.x + 32 * (i + 1), SELECTED_DIVIT.y, 20, 20)
+                    }
+                    for (let i = 0; i < 6; i++) {
+                        ctx.strokeRect(SELECTED_DIVIT.x + 32 * (i), SELECTED_DIVIT.y + 90, 20, 20)
+                    }
+                    ctx.strokeStyle = "blue";
+                    ctx.strokeRect(SELECTED_DIVIT.x + 32 * 6, SELECTED_DIVIT.y + 90, 20, 20)
                 }
             }
             if (SELECTED_DIVIT != null) {
@@ -264,8 +289,12 @@ function onMouseMove(evt) {
         SELECTED_PIECE.y = evt.clientY - SELECTED_PIECE.offset.y;
         if (SELECTED_PIECE instanceof Led)
             SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x, SELECTED_PIECE.offset.y - 50);
+        if (SELECTED_PIECE instanceof SevenSeg)
+            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x-10, SELECTED_PIECE.offset.y-5);
         if (SELECTED_PIECE instanceof Switch)
             SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 20, SELECTED_PIECE.offset.y - 40);
+        if (SELECTED_PIECE instanceof IcNotGate || SELECTED_PIECE instanceof IcAndGate || SELECTED_PIECE instanceof IcOrGate)
+            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 10, SELECTED_PIECE.offset.y - 5);
 
     } else if (SELECTED_WIRE != null) {
         SELECTED_WIRE.x1 = evt.clientX;
@@ -294,6 +323,21 @@ function onMouseUp(evt) {
             }
         }
 
+        //SevSegs
+        if (SELECTED_PIECE instanceof SevenSeg) {
+            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 5, SELECTED_PIECE.offset.y - 10);
+            if (SELECTED_DIVIT != null) {
+                for (let i = 0; i < 5; i++) {
+                    SELECTED_PIECE.lans.push(SELECTED_DIVIT.lan + i);
+                }
+                for (let i = 0; i < 5; i++) {
+                    SELECTED_PIECE.lans.push(SELECTED_DIVIT.lan + i + 30);
+                }
+            } else {
+                SELECTED_PIECE.lans = [];
+            }
+        }
+
         //Switches
         if (SELECTED_PIECE instanceof Switch) {
             SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 20, SELECTED_PIECE.offset.y - 40);
@@ -314,7 +358,54 @@ function onMouseUp(evt) {
                 SELECTED_PIECE.pluged = false;
             }
         }
+        //IcNotGate
+        if (SELECTED_PIECE instanceof IcNotGate) {
+            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 10, SELECTED_PIECE.offset.y - 5);
 
+            if (SELECTED_DIVIT != null) {
+                for (let i = 0; i < 7; i++) {
+                    SELECTED_PIECE.lans.push(SELECTED_DIVIT.lan + i);
+                }
+                for (let i = 0; i < 7; i++) {
+                    SELECTED_PIECE.lans.push(SELECTED_DIVIT.lan + i + 30);
+                }
+            } else {
+                SELECTED_PIECE.lans = [];
+            }
+
+        }
+        //IcAndGate
+        if (SELECTED_PIECE instanceof IcAndGate) {
+            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 10, SELECTED_PIECE.offset.y - 5);
+
+            if (SELECTED_DIVIT != null) {
+                for (let i = 0; i < 7; i++) {
+                    SELECTED_PIECE.lans.push(SELECTED_DIVIT.lan + i);
+                }
+                for (let i = 0; i < 7; i++) {
+                    SELECTED_PIECE.lans.push(SELECTED_DIVIT.lan + i + 30);
+                }
+            } else {
+                SELECTED_PIECE.lans = [];
+            }
+
+        }
+        //IcAndGate
+        if (SELECTED_PIECE instanceof IcOrGate) {
+            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 10, SELECTED_PIECE.offset.y - 5);
+
+            if (SELECTED_DIVIT != null) {
+                for (let i = 0; i < 7; i++) {
+                    SELECTED_PIECE.lans.push(SELECTED_DIVIT.lan + i);
+                }
+                for (let i = 0; i < 7; i++) {
+                    SELECTED_PIECE.lans.push(SELECTED_DIVIT.lan + i + 30);
+                }
+            } else {
+                SELECTED_PIECE.lans = [];
+            }
+
+        }
 
     }
 
@@ -323,12 +414,10 @@ function onMouseUp(evt) {
         SELECTED_WIRE.div2 = SELECTED_DIVIT.lan;
 
         //logic handle
-        //console.log("wire drawn " + OLD_DIVIT.lan +" " + SELECTED_DIVIT.lan)
         LANES[OLD_DIVIT.lan].con.push(SELECTED_DIVIT.lan)
         LANES[SELECTED_DIVIT.lan].con.push(OLD_DIVIT.lan)
-
-
         SELECTED_WIRE = null;
+
     } else if (SELECTED_WIRE != null) {
         WIRES.pop()
         SELECTED_WIRE = null;
@@ -347,12 +436,14 @@ function onMouseUp(evt) {
 
 //VALIDATE (only thing that doesnt get reset is cons) (and switch logic)
 function validate() {
+    //val reset
     LANES.forEach(e => {
         e.validated = false;
         e.val = null
     });
     //validate switches
     PIECES.forEach(e => {
+        //switch logic check
         if (e instanceof Switch) {
             if (e.pluged) {
                 if (e.isNew) {
@@ -384,10 +475,102 @@ function validate() {
 
             }
         }
-
     });
+    //validate neg and pos
     validateN(LANES[60])
     validateP(LANES[61])
+    PIECES.forEach(e => {
+        if (e instanceof IcNotGate) {
+            if (e.lans != null) {
+                if (LANES[e.lans[0]].val == true && LANES[e.lans[13]].val == false) {
+                    if (LANES[e.lans[1]].val != null)
+                        if (LANES[e.lans[1]].val)
+                            validateN(LANES[e.lans[2]])
+                        else
+                            validateP(LANES[e.lans[2]])
+                    if (LANES[e.lans[3]].val != null)
+                        if (LANES[e.lans[3]].val)
+                            validateN(LANES[e.lans[4]])
+                        else
+                            validateP(LANES[e.lans[4]])
+                    if (LANES[e.lans[5]].val != null)
+                        if (LANES[e.lans[5]].val)
+                            validateN(LANES[e.lans[6]])
+                        else
+                            validateP(LANES[e.lans[6]])
+                    if (LANES[e.lans[7]].val != null)
+                        if (LANES[e.lans[7]].val)
+                            validateN(LANES[e.lans[8]])
+                        else
+                            validateP(LANES[e.lans[8]])
+                    if (LANES[e.lans[9]].val != null)
+                        if (LANES[e.lans[9]].val)
+                            validateN(LANES[e.lans[10]])
+                        else
+                            validateP(LANES[e.lans[10]])
+                    if (LANES[e.lans[11]].val != null)
+                        if (LANES[e.lans[11]].val)
+                            validateN(LANES[e.lans[12]])
+                        else
+                            validateP(LANES[e.lans[12]])
+                }
+            }
+        }
+        if (e instanceof IcAndGate) {
+            if (e.lans != null) {
+                if (LANES[e.lans[0]].val == true && LANES[e.lans[13]].val == false) {
+                    if (LANES[e.lans[1]].val != null && LANES[e.lans[2]].val != null)
+                        if (LANES[e.lans[1]].val && LANES[e.lans[2]].val)
+                            validateP(LANES[e.lans[3]])
+                        else
+                            validateN(LANES[e.lans[3]])
+                    if (LANES[e.lans[4]].val != null && LANES[e.lans[5]].val != null)
+                        if (LANES[e.lans[4]].val && LANES[e.lans[5]].val)
+                            validateP(LANES[e.lans[6]])
+                        else
+                            validateN(LANES[e.lans[6]])
+                    if (LANES[e.lans[7]].val != null && LANES[e.lans[8]].val != null)
+                        if (LANES[e.lans[7]].val && LANES[e.lans[8]].val)
+                            validateP(LANES[e.lans[9]])
+                        else
+                            validateN(LANES[e.lans[9]])
+                    if (LANES[e.lans[10]].val != null && LANES[e.lans[11]].val != null)
+                        if (LANES[e.lans[10]].val && LANES[e.lans[11]].val)
+                            validateP(LANES[e.lans[12]])
+                        else
+                            validateN(LANES[e.lans[12]])
+
+                }
+            }
+        }
+        if (e instanceof IcOrGate) {
+            if (e.lans != null) {
+                if (LANES[e.lans[0]].val == true && LANES[e.lans[13]].val == false) {
+                    if (LANES[e.lans[1]].val != null && LANES[e.lans[2]].val != null)
+                        if (LANES[e.lans[1]].val || LANES[e.lans[2]].val)
+                            validateP(LANES[e.lans[3]])
+                        else
+                            validateN(LANES[e.lans[3]])
+                    if (LANES[e.lans[4]].val != null && LANES[e.lans[5]].val != null)
+                        if (LANES[e.lans[4]].val || LANES[e.lans[5]].val)
+                            validateP(LANES[e.lans[6]])
+                        else
+                            validateN(LANES[e.lans[6]])
+                    if (LANES[e.lans[7]].val != null && LANES[e.lans[8]].val != null)
+                        if (LANES[e.lans[7]].val || LANES[e.lans[8]].val)
+                            validateP(LANES[e.lans[9]])
+                        else
+                            validateN(LANES[e.lans[9]])
+                    if (LANES[e.lans[10]].val != null && LANES[e.lans[11]].val != null)
+                        if (LANES[e.lans[10]].val || LANES[e.lans[11]].val)
+                            validateP(LANES[e.lans[12]])
+                        else
+                            validateN(LANES[e.lans[12]])
+
+                }
+            }
+        }
+    });
     console.log(LANES)
 }
 
@@ -423,23 +606,24 @@ function validateP(lane) {
 
 //handle piece copying
 function handleCopying(evt) {
-    //ic1
+    //ic1 not gate
     if (evt.clientX > ic1c.x && evt.clientX < ic1c.x + ic1c.width &&
         evt.clientY > ic1c.y && evt.clientY < ic1c.y + ic1c.height && SELECTED_PIECE == null) {
 
-        SELECTED_PIECE = new Piece(evt.clientX - ic1c.width / 2, evt.clientY - ic1c.height / 2, ic1c.width, ic1c.height, 'ic.svg')
+        SELECTED_PIECE = new IcNotGate(evt.clientX - ic1c.width / 2, evt.clientY - ic1c.height / 2, ic1c.width, ic1c.height, 'ic-not-gate.svg')
         PIECES.push(SELECTED_PIECE);
     }
+    //ic2 and gate
     if (evt.clientX > ic2c.x && evt.clientX < ic2c.x + ic2c.width &&
         evt.clientY > ic2c.y && evt.clientY < ic2c.y + ic2c.height && SELECTED_PIECE == null) {
 
-        SELECTED_PIECE = new Piece(evt.clientX - ic2c.width / 2, evt.clientY - ic2c.height / 2, ic2c.width, ic2c.height, 'ic.svg')
+        SELECTED_PIECE = new IcAndGate(evt.clientX - ic2c.width / 2, evt.clientY - ic2c.height / 2, ic2c.width, ic2c.height, 'ic-and-gate.svg')
         PIECES.push(SELECTED_PIECE);
     }
     if (evt.clientX > ic3c.x && evt.clientX < ic3c.x + ic3c.width &&
         evt.clientY > ic3c.y && evt.clientY < ic3c.y + ic3c.height && SELECTED_PIECE == null) {
 
-        SELECTED_PIECE = new Piece(evt.clientX - ic3c.width / 2, evt.clientY - ic3c.height / 2, ic3c.width, ic3c.height, 'ic.svg')
+        SELECTED_PIECE = new IcOrGate(evt.clientX - ic3c.width / 2, evt.clientY - ic3c.height / 2, ic3c.width, ic3c.height, 'ic-or-gate.svg')
         PIECES.push(SELECTED_PIECE);
     }
     //led1
@@ -468,6 +652,13 @@ function handleCopying(evt) {
         evt.clientY > switch1c.y && evt.clientY < switch1c.y + switch1c.height && SELECTED_PIECE == null) {
 
         SELECTED_PIECE = new Switch(evt.clientX - switch1c.width / 2, evt.clientY - switch1c.height / 2, switch1c.width, switch1c.height, 'switchoff.svg', "switchon.svg")
+        PIECES.push(SELECTED_PIECE);
+    }
+    //sevseg
+    if (evt.clientX > sevsegc.x && evt.clientX < sevsegc.x + sevsegc.width &&
+        evt.clientY > sevsegc.y && evt.clientY < sevsegc.y + sevsegc.height && SELECTED_PIECE == null) {
+
+        SELECTED_PIECE = new SevenSeg(evt.clientX - sevsegc.width / 2, evt.clientY - sevsegc.height / 2, sevsegc.width, sevsegc.height)
         PIECES.push(SELECTED_PIECE);
     }
 }

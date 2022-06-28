@@ -1,6 +1,4 @@
-
-
-export default class Piece {
+export default class IcAndGate {
     constructor(x, y, w, h, imageSrc) {
         this.x = x;
         this.y = y;
@@ -8,8 +6,9 @@ export default class Piece {
         this.width = w
         this.image = new Image();
         this.image.src = imageSrc;
+        this.lans = [];
     }
-    draw(ctx, LANES=null) {
+    draw(ctx, LANES=0) {
         ctx.drawImage(this.image, this.x, this.y)
     }
 }
