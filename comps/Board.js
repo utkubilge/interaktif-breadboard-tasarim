@@ -198,10 +198,10 @@ export default function Board() {
 
 //mobile function TODO
 function onTouchStart(evt) {
-    if (!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement)) {
-        document.documentElement.requestFullscreen()
-        return;
-    }
+    // if (!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement)) {
+    //     document.documentElement.requestFullscreen()
+    //     return;
+    // }
 
     let loc = {
         clientX: evt.touches[0].clientX,
@@ -216,8 +216,12 @@ function onTouchMove(evt) {
     };
     onMouseMove(loc);
 }
-function onTouchEnd() {
-    onMouseUp();
+function onTouchEnd(evt) {
+    let loc = {
+        clientX: evt.touches[0].clientX,
+        clientY: evt.touches[0].clientY
+    };
+    onMouseUp(loc);
 }
 
 function onDoubleClick(evt) {
@@ -233,7 +237,6 @@ function onDoubleClick(evt) {
 
 //MOUSEDOWN
 function onMouseDown(evt) {
-    console.log("down")
 
 
     //logging coords
