@@ -130,7 +130,7 @@ export default function Board() {
                         ctx.strokeRect(SELECTED_DIVIT.x + 32 * (i + 1), SELECTED_DIVIT.y, 20, 20)
                     }
                     for (let i = 0; i < 5; i++) {
-                        ctx.strokeRect(SELECTED_DIVIT.x + 32 * (i), SELECTED_DIVIT.y+218, 20, 20)
+                        ctx.strokeRect(SELECTED_DIVIT.x + 32 * (i), SELECTED_DIVIT.y + 218, 20, 20)
                     }
                 }
                 if (SELECTED_PIECE instanceof Switch) {
@@ -186,42 +186,9 @@ export default function Board() {
             onMouseDown={onMouseDown}
             onMouseMove={onMouseMove}
             onMouseUp={onMouseUp}
-            onTouchStart={onTouchStart}
-            onTouchMove={onTouchMove}
-            onTouchEnd={onTouchEnd}
             onDoubleClick={onDoubleClick}
         />
     );
-}
-
-
-
-//mobile function TODO
-function onTouchStart(evt) {
-    // if (!(document.fullscreenElement || document.mozFullScreenElement || document.webkitFullscreenElement || document.msFullscreenElement)) {
-    //     document.documentElement.requestFullscreen()
-    //     return;
-    // }
-
-    let loc = {
-        clientX: evt.touches[0].clientX,
-        clientY: evt.touches[0].clientY
-    };
-    onMouseDown(loc);
-}
-function onTouchMove(evt) {
-    let loc = {
-        clientX: evt.touches[0].clientX,
-        clientY: evt.touches[0].clientY
-    };
-    onMouseMove(loc);
-}
-function onTouchEnd(evt) {
-    let loc = {
-        clientX: evt.touches[0].clientX,
-        clientY: evt.touches[0].clientY
-    };
-    onMouseUp(loc);
 }
 
 function onDoubleClick(evt) {
@@ -293,7 +260,7 @@ function onMouseMove(evt) {
         if (SELECTED_PIECE instanceof Led)
             SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x, SELECTED_PIECE.offset.y - 50);
         if (SELECTED_PIECE instanceof SevenSeg)
-            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x-10, SELECTED_PIECE.offset.y-5);
+            SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 10, SELECTED_PIECE.offset.y - 5);
         if (SELECTED_PIECE instanceof Switch)
             SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 20, SELECTED_PIECE.offset.y - 40);
         if (SELECTED_PIECE instanceof IcNotGate || SELECTED_PIECE instanceof IcAndGate || SELECTED_PIECE instanceof IcOrGate)
@@ -330,6 +297,7 @@ function onMouseUp(evt) {
         if (SELECTED_PIECE instanceof SevenSeg) {
             SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 5, SELECTED_PIECE.offset.y - 10);
             if (SELECTED_DIVIT != null) {
+                SELECTED_PIECE.lans = [];
                 for (let i = 0; i < 5; i++) {
                     SELECTED_PIECE.lans.push(SELECTED_DIVIT.lan + i);
                 }
@@ -344,21 +312,22 @@ function onMouseUp(evt) {
         //Switches
         if (SELECTED_PIECE instanceof Switch) {
             SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 20, SELECTED_PIECE.offset.y - 40);
-
+            SELECTED_PIECE.hist.push(SELECTED_DIVIT)
+            if(SELECTED_PIECE.hist[SELECTED_PIECE.hist.length-1] != SELECTED_PIECE.hist[SELECTED_PIECE.hist.length-2] && SELECTED_PIECE.hist[SELECTED_PIECE.hist.length-2] != null) {
+                SELECTED_PIECE.clearOld = true;
+            }
 
             if (SELECTED_DIVIT != null) {
                 SELECTED_PIECE.Llane = SELECTED_DIVIT.lan;
                 SELECTED_PIECE.Mlane = SELECTED_DIVIT.lan + 1;
                 SELECTED_PIECE.Rlane = SELECTED_DIVIT.lan + 2;
-                SELECTED_PIECE.pluged = true;
-
-
-
+                SELECTED_PIECE.plugged = true;
+                
             } else {
                 SELECTED_PIECE.Llane = null;
                 SELECTED_PIECE.Mlane = null;
                 SELECTED_PIECE.Rlane = null;
-                SELECTED_PIECE.pluged = false;
+                SELECTED_PIECE.plugged = false;
             }
         }
         //IcNotGate
@@ -366,6 +335,7 @@ function onMouseUp(evt) {
             SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 10, SELECTED_PIECE.offset.y - 5);
 
             if (SELECTED_DIVIT != null) {
+                SELECTED_PIECE.lans = [];
                 for (let i = 0; i < 7; i++) {
                     SELECTED_PIECE.lans.push(SELECTED_DIVIT.lan + i);
                 }
@@ -382,6 +352,7 @@ function onMouseUp(evt) {
             SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 10, SELECTED_PIECE.offset.y - 5);
 
             if (SELECTED_DIVIT != null) {
+                SELECTED_PIECE.lans = [];
                 for (let i = 0; i < 7; i++) {
                     SELECTED_PIECE.lans.push(SELECTED_DIVIT.lan + i);
                 }
@@ -393,11 +364,12 @@ function onMouseUp(evt) {
             }
 
         }
-        //IcAndGate
+        //IcOrGate
         if (SELECTED_PIECE instanceof IcOrGate) {
             SELECTED_DIVIT = getPressedDivit(evt, SELECTED_PIECE.offset.x - 10, SELECTED_PIECE.offset.y - 5);
 
             if (SELECTED_DIVIT != null) {
+                SELECTED_PIECE.lans = [];
                 for (let i = 0; i < 7; i++) {
                     SELECTED_PIECE.lans.push(SELECTED_DIVIT.lan + i);
                 }
@@ -413,7 +385,7 @@ function onMouseUp(evt) {
     }
 
     //wire drawing
-    if (SELECTED_DIVIT != null && OLD_DIVIT != SELECTED_DIVIT && SELECTED_PIECE == null) {
+    if (SELECTED_DIVIT != null && OLD_DIVIT != SELECTED_DIVIT && SELECTED_PIECE == null && SELECTED_WIRE != null) {
         SELECTED_WIRE.div2 = SELECTED_DIVIT.lan;
 
         //logic handle
@@ -430,11 +402,9 @@ function onMouseUp(evt) {
         PIECES.splice(PIECES.indexOf(SELECTED_PIECE), 1)
 
     }
+
     SELECTED_PIECE = null;
-
-    //board logic calculate
     validate()
-
 }
 
 //VALIDATE (only thing that doesnt get reset is cons) (and switch logic)
@@ -448,39 +418,70 @@ function validate() {
     PIECES.forEach(e => {
         //switch logic check
         if (e instanceof Switch) {
-            if (e.pluged) {
-                if (e.isNew) {
-                    if (e.on) {
-                        LANES[e.Rlane].con.push(e.Mlane)
-                        LANES[e.Mlane].con.push(e.Rlane)
-                    } else {
-                        LANES[e.Llane].con.push(e.Mlane)
-                        LANES[e.Mlane].con.push(e.Llane)
-                    }
-                    e.isNew = false;
+            if(e.clearOld && e.plugged) {
+                let oldLane = e.hist[e.hist.length-2]
+                if (e.on) {
+                    LANES[oldLane.lan + 2].con.splice(LANES[oldLane.lan + 2].con.indexOf(oldLane.lan + 1), 1)
+                    LANES[oldLane.lan + 1].con.splice(LANES[oldLane.lan + 1].con.indexOf(oldLane.lan + 2), 1)
+                } else {
+                    LANES[oldLane.lan].con.splice(LANES[oldLane.lan].con.indexOf(oldLane.lan +1), 1)
+                    LANES[oldLane.lan + 1].con.splice(LANES[oldLane.lan + 1].con.indexOf(oldLane.lan), 1)
                 }
-                if (e.changed) {
-                    if (e.on) {
-                        LANES[e.Llane].con.splice(LANES[e.Llane].con.indexOf(e.Mlane), 1)
-                        LANES[e.Mlane].con.splice(LANES[e.Mlane].con.indexOf(e.Llane), 1)
-                        LANES[e.Rlane].con.push(e.Mlane)
-                        LANES[e.Mlane].con.push(e.Rlane)
-                    } else {
-                        LANES[e.Rlane].con.splice(LANES[e.Rlane].con.indexOf(e.Mlane), 1)
-                        LANES[e.Mlane].con.splice(LANES[e.Mlane].con.indexOf(e.Rlane), 1)
-                        LANES[e.Llane].con.push(e.Mlane)
-                        LANES[e.Mlane].con.push(e.Llane)
-                    }
-                    e.changed = false;
-                }
-
-            } else {
-
+                e.clearOld = false;
+                e.isNew = true;
             }
+
+            if(!e.plugged && e.clearOld) {
+                let oldLane = e.hist[e.hist.length-2]
+                if (e.on) {
+                    LANES[oldLane.lan + 2].con.splice(LANES[oldLane.lan + 2].con.indexOf(oldLane.lan + 1), 1)
+                    LANES[oldLane.lan + 1].con.splice(LANES[oldLane.lan + 1].con.indexOf(oldLane.lan + 2), 1)
+                } else {
+                    LANES[oldLane.lan].con.splice(LANES[oldLane.lan].con.indexOf(oldLane.lan +1), 1)
+                    LANES[oldLane.lan + 1].con.splice(LANES[oldLane.lan + 1].con.indexOf(oldLane.lan), 1)
+                }
+                e.clearOld = false;
+                e.isNew = true;
+            }
+            
+            if (e.isNew && e.plugged) {
+                if (e.on) {
+                    LANES[e.Rlane].con.push(e.Mlane)
+                    LANES[e.Mlane].con.push(e.Rlane)
+                } else {
+                    LANES[e.Llane].con.push(e.Mlane)
+                    LANES[e.Mlane].con.push(e.Llane)
+                }
+                e.isNew = false;
+            }
+            if (e.changed && e.plugged) {
+                if (e.on) {
+                    LANES[e.Llane].con.splice(LANES[e.Llane].con.indexOf(e.Mlane), 1)
+                    LANES[e.Mlane].con.splice(LANES[e.Mlane].con.indexOf(e.Llane), 1)
+                    LANES[e.Rlane].con.push(e.Mlane)
+                    LANES[e.Mlane].con.push(e.Rlane)
+                } else {
+                    LANES[e.Rlane].con.splice(LANES[e.Rlane].con.indexOf(e.Mlane), 1)
+                    LANES[e.Mlane].con.splice(LANES[e.Mlane].con.indexOf(e.Rlane), 1)
+                    LANES[e.Llane].con.push(e.Mlane)
+                    LANES[e.Mlane].con.push(e.Llane)
+                }
+                e.changed = false;
+            }
+
+            
         }
+    });
+    //val reset again?
+    LANES.forEach(e => {
+        e.validated = false;
+        e.val = null
     });
     //validate neg and pos
     validateN(LANES[60])
+    LANES.forEach(e => {
+        e.fix()
+    });
     validateP(LANES[61])
     PIECES.forEach(e => {
         if (e instanceof IcNotGate) {
@@ -574,14 +575,15 @@ function validate() {
             }
         }
     });
+
     console.log(LANES)
 }
 
 function validateN(lane) {
     if (lane.validated != true) {
         lane.validated = true;
-        if (lane.ioval != true)
-            lane.val = false;
+        //if (lane.ioval != true)
+        lane.val = false;
 
         if (lane.con != null) {
             lane.con.forEach(e => {
@@ -595,8 +597,8 @@ function validateN(lane) {
 function validateP(lane) {
     if (lane.validated != true) {
         lane.validated = true;
-        if (lane.ioval != false)
-            lane.val = true;
+        //if (lane.ioval != false)
+        lane.val = true;
 
         if (lane.con != null) {
             lane.con.forEach(e => {

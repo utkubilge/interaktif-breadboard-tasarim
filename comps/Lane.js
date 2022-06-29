@@ -9,7 +9,7 @@ export default class Lane {
         this.con = [];
     }
     fix() {
-        if (io) {
+        if (this.io) {
             this.val = this.ioval;
         }
     }

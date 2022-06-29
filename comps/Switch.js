@@ -14,11 +14,12 @@ export default class Switch {
         this.LlaneO = null;
         this.MlaneO = null;
         this.RlaneO = null;
-        this.pluged = false;
-        this.changed = false;
-        this.isNew = true;
         this.on = false;
-        this.oldDiv = null;
+        this.hist = [];
+        this.isNew = true;
+        this.changed = false;
+        this.clearOld = false;
+        this.plugged = false;
 
     }
     draw(ctx, LANES) {
