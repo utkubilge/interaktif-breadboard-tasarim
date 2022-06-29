@@ -485,7 +485,7 @@ function validate() {
     validateP(LANES[61])
     PIECES.forEach(e => {
         if (e instanceof IcNotGate) {
-            if (e.lans != null) {
+            if (e.lans.length > 0) {
                 if (LANES[e.lans[0]].val == true && LANES[e.lans[13]].val == false) {
                     if (LANES[e.lans[1]].val != null)
                         if (LANES[e.lans[1]].val)
@@ -521,7 +521,7 @@ function validate() {
             }
         }
         if (e instanceof IcAndGate) {
-            if (e.lans != null) {
+            if (e.lans.length > 0) {
                 if (LANES[e.lans[0]].val == true && LANES[e.lans[13]].val == false) {
                     if (LANES[e.lans[1]].val != null && LANES[e.lans[2]].val != null)
                         if (LANES[e.lans[1]].val && LANES[e.lans[2]].val)
@@ -548,7 +548,7 @@ function validate() {
             }
         }
         if (e instanceof IcOrGate) {
-            if (e.lans != null) {
+            if (e.lans.length > 0) {
                 if (LANES[e.lans[0]].val == true && LANES[e.lans[13]].val == false) {
                     if (LANES[e.lans[1]].val != null && LANES[e.lans[2]].val != null)
                         if (LANES[e.lans[1]].val || LANES[e.lans[2]].val)

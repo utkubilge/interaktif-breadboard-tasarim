@@ -11,9 +11,6 @@ export default class Switch {
         this.Llane = null;
         this.Mlane = null;
         this.Rlane = null;
-        this.LlaneO = null;
-        this.MlaneO = null;
-        this.RlaneO = null;
         this.on = false;
         this.hist = [];
         this.isNew = true;
